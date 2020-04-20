@@ -6,17 +6,15 @@ const Header = ({ name }) => {
 };
 
 const Total = ({ parts }) => {
-  const sum =
-    parts[0].exercises +
-    parts[1].exercises +
-    parts[2].exercises;
+  let initialValue = 0;
+  const sum = parts.reduce((acc, cur) => acc + cur.exercises, initialValue);
   return <p> Number of exercises {sum}</p>;
 };
 
 const Part = ({ part }) => {
   return (
     <p>
-      {part.name} {part.exercises}
+      {part.name} {part.exercises}{" "}
     </p>
   );
 };
