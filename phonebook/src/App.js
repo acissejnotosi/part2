@@ -6,11 +6,16 @@ const App = () => {
 
   const addName = (event) => {
     event.preventDefault();
-    const nameObject = {
-      name: newName,
-      id: persons.length + 1,
-    };
-    setPersons(persons.concat(nameObject));
+
+    if (!persons.find((x) => x.name.localeCompare(newName) == 0)) {
+      const nameObject = {
+        name: newName,
+        id: persons.length + 1,
+      };
+      setPersons(persons.concat(nameObject));
+    } else {
+      window.alert(`${newName} is already added to phonebook`);
+    }
     setNewName("");
   };
 
