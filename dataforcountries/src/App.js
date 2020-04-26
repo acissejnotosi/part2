@@ -3,7 +3,7 @@ import axios from "axios";
 
 const shortid = require("shortid");
 
-const CountryInfo = ({ country }) => {
+const CountryView = ({ country }) => {
   return (
     <>
       {country.map((x) => (
@@ -31,13 +31,23 @@ const Filter = (props) => {
       : props.countries.filter((x) =>
           x.name.toUpperCase().includes(props.filterCountry.toUpperCase())
         );
+
+  const handleClick = (event) => {
+    props.setFilterCountry(event.target.value);
+  };
+
   if (showFilter !== []) {
     if (showFilter.length > 1 && showFilter.length <= 10) {
       return showFilter.map((x) => (
-        <div key={shortid.generate()}>{x.name}</div>
+        <div key={shortid.generate()}>
+          {x.name}
+          <button value={x.name} onClick={handleClick} type="button">
+            Show
+          </button>
+        </div>
       ));
     } else if (showFilter.length === 1) {
-      return <CountryInfo country={showFilter} />;
+      return <CountryView country={showFilter} />;
     } else if (showFilter.length > 10) {
       return <div> Too many maches, specify another filter</div>;
     }
@@ -67,7 +77,7 @@ const App = () => {
     <div>
       find countries
       <input value={filterCountry} onChange={handleFilterCountry}></input>
-      <Filter countries={countries} filterCountry={filterCountry} />
+      <Filter countries={countries} filterCountry={filterCountry} setFilterCountry={setFilterCountry}/>
     </div>
   );
 };
