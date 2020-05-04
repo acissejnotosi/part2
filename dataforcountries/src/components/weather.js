@@ -16,12 +16,10 @@ const Weather = ({ capital }) => {
         },
       })
       .then((response) => {
-        console.log(response);
         setWeather(response.data.current);
         setIcon(response.data.current.weather_icons);
       })
        .catch((error) => {
-         console.log(error);
        });
   }, [capital]);
 
