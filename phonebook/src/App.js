@@ -1,48 +1,10 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import phoneNumberService from "./services/phoneNumberService";
+import PersonForm from "./components/personForm";
+import Persons from "./components/persons";
+import Filter from "./components/filter";
 
-const Filter = ({ filterName, handleChange }) => (
-  <div>
-    filter shown with <input value={filterName} onChange={handleChange} />
-  </div>
-);
-
-const PersonForm = (props) => {
-  return (
-    <form onSubmit={props.addName}>
-      <div>
-        name: <input value={props.newName} onChange={props.handleNameChange} />
-      </div>
-      <div>
-        number:{" "}
-        <input value={props.newNumber} onChange={props.handleNumberChange} />
-      </div>
-      <div>
-        <button type="submit">add</button>
-      </div>
-    </form>
-  );
-};
-
-const Persons = ({ persons, filterName }) => {
-  const namesToShow =
-    filterName === ""
-      ? persons
-      : persons.filter((person) =>
-          person.name.toUpperCase().startsWith(filterName.toUpperCase())
-        );
-
-  return (
-    <>
-      {namesToShow.map((person) => (
-        <div key={person.id}>
-          {person.name} {person.number}
-        </div>
-      ))}
-    </>
-  );
-};
+const shortid = require("shortid");
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -55,16 +17,34 @@ const App = () => {
       setPersons(numbers);
     });
   }, []);
-  console.log("render", persons.length, "persons phonebooks");
+
+  const deleteNumber = (person) => {
+    if (window.confirm(`Delete ${person.name}?`)) {
+      phoneNumberService
+        .deleteNumber(person.id)
+        .then(() => {
+          setPersons(persons.filter((item) => item.id !== person.id));
+          window.alert(`Person ${person.name} added with success!`);
+        })
+        .catch((error) => {
+          window.alert(
+            `Error detected! The name ${person.name} and number ${person.number} was already deleted from server.`
+          );
+        });
+      phoneNumberService
+        .getAll()
+        .then((persons) => setPersons(persons))
+        .catch((error) => `The following error was detected: ${error}`);
+    }
+  };
 
   const handleSubmitForm = (event) => {
     event.preventDefault();
-
     if (!persons.find((x) => x.name.toUpperCase() === newName.toUpperCase())) {
       const nameObject = {
         name: newName,
         number: newNumber !== undefined ? newNumber : "",
-        id: persons.length + 1,
+        id: shortid.generate(),
       };
       phoneNumberService.createNumber(nameObject).then((newPersons) => {
         setPersons(persons.concat(newPersons));
@@ -101,7 +81,11 @@ const App = () => {
         handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={persons} filterName={filterName} />
+      <Persons
+        persons={persons}
+        filterName={filterName}
+        deleteNumber={deleteNumber}
+      />
     </div>
   );
 };

@@ -1,22 +1,26 @@
 import axios from "axios";
 const baseUrl = "http://localhost:3001/persons";
 
-const getAll = () => {
+const getAll = async () => {
   const request = axios.get(baseUrl);
-
-  return request.then((response) => {
-    return response.data;
-  });
+  const response = await request;
+  return response.data;
 };
 
-const createNumber = nameObject => {
+const createNumber = async nameObject => {
   const request = axios.post(baseUrl, nameObject);
-  return request.then((response) => {
-    return response.data;
-  });
+  const response = await request;
+  return response.data;
+};
+
+const deleteNumber = async id => {
+  const request = axios.delete(`${baseUrl}/${id}`);
+  const response = await request;
+  return response.data;
 };
 
 export default {
   getAll,
   createNumber,
+  deleteNumber
 };
