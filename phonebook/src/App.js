@@ -24,7 +24,7 @@ const App = () => {
         .deleteNumber(person.id)
         .then(() => {
           setPersons(persons.filter((item) => item.id !== person.id));
-          window.alert(`Person ${person.name} added with success!`);
+          window.alert(`Person ${person.name} removed with success!`);
         })
         .catch((error) => {
           window.alert(

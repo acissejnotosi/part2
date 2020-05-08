@@ -5,7 +5,7 @@ const Persons = ({ persons, filterName, deleteNumber }) => {
     filterName === ""
       ? persons
       : persons.filter((person) =>
-          person.name.toUpperCase().startsWith(filterName.toUpperCase())
+          person.name.toUpperCase().includes(filterName.toUpperCase())
         );
 
   return (
