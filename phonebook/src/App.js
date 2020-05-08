@@ -38,9 +38,46 @@ const App = () => {
     }
   };
 
+  const updateNumber = (person, newNumber) => {
+    const updatedPerson = {
+      name: person.name,
+      number: newNumber,
+      id: person.id,
+    };
+    if (
+      window.confirm(
+        ` ${person.name} is already added in the phonebook, replace de older number with a new one?`
+      )
+    ) {
+      phoneNumberService
+        .updateNumber(person.id, updatedPerson)
+        .then((returnedPerson) => {
+          setPersons(
+            persons.map((item) =>
+              item.id !== person.id ? item : returnedPerson
+            )
+          );
+          window.alert(`Person ${person.name} was successfully updated!`);
+        })
+        .catch((error) => {
+          window.alert(
+            `Error detected! The name ${person.name} and number ${person.number} was already deleted from server.`
+          );
+        });
+      phoneNumberService
+        .getAll()
+        .then((persons) => setPersons(persons))
+        .catch((error) => `The following error was detected: ${error}`);
+    }
+  };
+
   const handleSubmitForm = (event) => {
     event.preventDefault();
-    if (!persons.find((x) => x.name.toUpperCase() === newName.toUpperCase())) {
+    if (
+      !persons.find(
+        (x) => x.name.trim().toUpperCase() === newName.trim().toUpperCase()
+      )
+    ) {
       const nameObject = {
         name: newName,
         number: newNumber !== undefined ? newNumber : "",
@@ -49,8 +86,19 @@ const App = () => {
       phoneNumberService.createNumber(nameObject).then((newPersons) => {
         setPersons(persons.concat(newPersons));
       });
-    } else {
-      window.alert(`${newName} is already added to phonebook`);
+    } else if (
+      persons.find(
+        (item) =>
+          item.name.trim().toUpperCase() === newName.trim().toUpperCase()
+      )
+    ) {
+      updateNumber(
+        persons.filter(
+          (item) =>
+            item.name.trim().toUpperCase() === newName.trim().toUpperCase()
+        )[0],
+        newNumber
+      );
     }
     setNewName("");
     setNewNumber("");
