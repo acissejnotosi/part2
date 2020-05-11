@@ -3,6 +3,7 @@ import phoneNumberService from "./services/phoneNumberService";
 import PersonForm from "./components/personForm";
 import Persons from "./components/persons";
 import Filter from "./components/filter";
+import {errorNotification, successNotification} from "./components/notification"
 
 const shortid = require("shortid");
 
@@ -11,6 +12,8 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [filterName, setFilterName] = useState("");
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     phoneNumberService.getAll().then((numbers) => {
@@ -24,7 +27,10 @@ const App = () => {
         .deleteNumber(person.id)
         .then(() => {
           setPersons(persons.filter((item) => item.id !== person.id));
-          window.alert(`Person ${person.name} removed with success!`);
+          setSuccessMessage(`Person ${person.name} removed with success!`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         })
         .catch((error) => {
           window.alert(
@@ -57,7 +63,10 @@ const App = () => {
               item.id !== person.id ? item : returnedPerson
             )
           );
-          window.alert(`Person ${person.name} was successfully updated!`);
+          setSuccessMessage(`Person ${person.name} was successfully updated!`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         })
         .catch((error) => {
           window.alert(
@@ -85,6 +94,10 @@ const App = () => {
       };
       phoneNumberService.createNumber(nameObject).then((newPersons) => {
         setPersons(persons.concat(newPersons));
+        setSuccessMessage(`Added ${nameObject.name}`);
+        setTimeout(() => {
+          setSuccessMessage(null);
+        }, 5000);
       });
     } else if (
       persons.find(
@@ -119,6 +132,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <successNotification message={successMessage} />
+      <errorNotification message={errorMessage} />
       <Filter filterName={filterName} handleChange={handleFilterNameChange} />
       <h3>Add a new</h3>
       <PersonForm
