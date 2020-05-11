@@ -3,7 +3,8 @@ import phoneNumberService from "./services/phoneNumberService";
 import PersonForm from "./components/personForm";
 import Persons from "./components/persons";
 import Filter from "./components/filter";
-import {errorNotification, successNotification} from "./components/notification"
+import SuccessNotification from "./components/successNotification";
+import ErrorNotification from "./components/errorNotification";
 
 const shortid = require("shortid");
 
@@ -33,9 +34,12 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          window.alert(
+          setErrorMessage(
             `Error detected! The name ${person.name} and number ${person.number} was already deleted from server.`
           );
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         });
       phoneNumberService
         .getAll()
@@ -69,14 +73,22 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          window.alert(
+          setErrorMessage(
             `Error detected! The name ${person.name} and number ${person.number} was already deleted from server.`
           );
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
         });
       phoneNumberService
         .getAll()
         .then((persons) => setPersons(persons))
-        .catch((error) => `The following error was detected: ${error}`);
+        .catch((error) => {
+          setErrorMessage(`The following error was detected: ${error}`);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     }
   };
 
@@ -132,8 +144,8 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <successNotification message={successMessage} />
-      <errorNotification message={errorMessage} />
+      <SuccessNotification message={successMessage} />
+      <ErrorNotification message={errorMessage} />
       <Filter filterName={filterName} handleChange={handleFilterNameChange} />
       <h3>Add a new</h3>
       <PersonForm
