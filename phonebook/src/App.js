@@ -73,9 +73,7 @@ const App = () => {
           }, 5000);
         })
         .catch((error) => {
-          setErrorMessage(
-            `Error detected! The name ${person.name} and number ${person.number} was already deleted from server.`
-          );
+          setErrorMessage(error.response.data.error);
           setTimeout(() => {
             setErrorMessage(null);
           }, 5000);
@@ -104,13 +102,21 @@ const App = () => {
         number: newNumber !== undefined ? newNumber : "",
         id: shortid.generate(),
       };
-      phoneNumberService.createNumber(nameObject).then((newPersons) => {
-        setPersons(persons.concat(newPersons));
-        setSuccessMessage(`Added ${nameObject.name}`);
-        setTimeout(() => {
-          setSuccessMessage(null);
-        }, 5000);
-      });
+      phoneNumberService
+        .createNumber(nameObject)
+        .then((newPersons) => {
+          setPersons(persons.concat(newPersons));
+          setSuccessMessage(`Added ${nameObject.name}`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
+        })
+        .catch((error) => {
+          setErrorMessage(error.response.data.error);
+          setTimeout(() => {
+            setErrorMessage(null);
+          }, 5000);
+        });
     } else if (
       persons.find(
         (item) =>
